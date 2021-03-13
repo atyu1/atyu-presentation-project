@@ -12,12 +12,9 @@ type Page struct {
 	Text  string
 }
 
-func homeViewHandler(w http.ResponseWriter, r *http.Request) {
-	text := r.URL.Path[len("/"):]
-	p, err := loadPage(text)
-	if err != nil {
-		p = &Page{Title: "Home", Text: text}
-	}
+func homeViewHandler(w http.ResponseWriter, r *http.Request, text string) {
+	p := &Page{Title: "Home", Text: text}
+	renderTemplate(w, "home", p)
 }
 
 var templates = template.Must(template.ParseFiles("home.htmltmpl"))
@@ -43,6 +40,6 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 }
 
 func main() {
-	http.HandleFunc("/home", makeHandler((homeViewHandler))
+	http.HandleFunc("/home/", makeHandler(homeViewHandler))
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
